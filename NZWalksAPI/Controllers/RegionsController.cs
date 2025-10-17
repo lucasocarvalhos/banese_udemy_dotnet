@@ -73,7 +73,7 @@ public class RegionsController : ControllerBase
             RegionImageUrl = region.RegionImageUrl
         };
 
-        _context.Regions.Add(regionModel);
+        await _context.Regions.AddAsync(regionModel);
         await _context.SaveChangesAsync();
 
         // Model para DTO 
@@ -88,5 +88,41 @@ public class RegionsController : ControllerBase
         return CreatedAtAction(nameof(GetRegionById), new { id = regionDto.Id }, regionDto);
     }
 
+    // Atualizar região
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateRegionRequestDto(Guid id, UpdateRegionRequestDto updateRegion)
+    {
 
+        var regionModel = await _context.Regions.FindAsync(id);
+        if (regionModel == null)
+        {
+            return NotFound();
+        }
+
+        // Map DTO para Model
+        regionModel.Code = updateRegion.Code;
+        regionModel.Name = updateRegion.Name;
+        regionModel.RegionImageUrl = updateRegion.RegionImageUrl;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+
+    }
+
+    // Deletar região
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteRegion(Guid id)
+    {
+        var regionModel = await _context.Regions.FindAsync(id);
+        if (regionModel == null)
+        {
+            return NotFound();
+        }
+
+        _context.Regions.Remove(regionModel);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

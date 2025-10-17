@@ -165,3 +165,4 @@ C:\Users\lucas\Documents\Estudos\Projetos\banese_udemy_dotnet\NZWalksAPI\obj\Deb
 C:\Users\lucas\Documents\Estudos\Projetos\banese_udemy_dotnet\NZWalksAPI\obj\Debug\net9.0\NZWalksAPI.pdb
 C:\Users\lucas\Documents\Estudos\Projetos\banese_udemy_dotnet\NZWalksAPI\obj\Debug\net9.0\NZWalksAPI.genruntimeconfig.cache
 C:\Users\lucas\Documents\Estudos\Projetos\banese_udemy_dotnet\NZWalksAPI\obj\Debug\net9.0\ref\NZWalksAPI.dll
+C:\Users\lucas\Documents\Estudos\Projetos\banese_udemy_dotnet\NZWalksAPI\obj\Debug\net9.0\NZWalksAPI.sourcelink.json
