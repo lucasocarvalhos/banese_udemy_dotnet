@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NZWalksAPI.Data;
 using NZWalksAPI.Models;
 using NZWalksAPI.Models.DTO;
+using NZWalksAPI.Repositories;
 
 
 [ApiController]
@@ -10,16 +11,19 @@ using NZWalksAPI.Models.DTO;
 public class RegionsController : ControllerBase
 {
     private readonly NZWalksDbContext _context;
-    public RegionsController(NZWalksDbContext context)
+    private readonly IRegionRepository _regionRepository;
+    public RegionsController(NZWalksDbContext context, IRegionRepository regionRepository)
     {
         _context = context;
+        _regionRepository = regionRepository;
+
     }
 
     // Listar todas as regiões
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Region>>> GetAllRegions()
     {
-        var regions = await _context.Regions.ToListAsync();
+        var regions = await _regionRepository.GetAllAsync();
 
         // Mapear Model para DTO 
         var regionsDto = new List<RegionDto>();
@@ -41,7 +45,7 @@ public class RegionsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Region>> GetRegionById(Guid id)
     {
-        var regionDomain = await _context.Regions.FindAsync(id);
+        var regionDomain = await _regionRepository.GetByIdAsync(id);
         if (regionDomain == null)
         {
             return NotFound();
@@ -73,8 +77,7 @@ public class RegionsController : ControllerBase
             RegionImageUrl = region.RegionImageUrl
         };
 
-        await _context.Regions.AddAsync(regionModel);
-        await _context.SaveChangesAsync();
+        regionModel = await _regionRepository.CreateAsync(regionModel);
 
         // Model para DTO 
         var regionDto = new RegionDto()
@@ -93,18 +96,14 @@ public class RegionsController : ControllerBase
     public async Task<IActionResult> UpdateRegionRequestDto(Guid id, UpdateRegionRequestDto updateRegion)
     {
 
-        var regionModel = await _context.Regions.FindAsync(id);
-        if (regionModel == null)
+        var regionModel = new Region()
         {
-            return NotFound();
-        }
+            Code = updateRegion.Code,
+            Name = updateRegion.Name,
+            RegionImageUrl = updateRegion.RegionImageUrl
+        };
 
-        // Map DTO para Model
-        regionModel.Code = updateRegion.Code;
-        regionModel.Name = updateRegion.Name;
-        regionModel.RegionImageUrl = updateRegion.RegionImageUrl;
-
-        await _context.SaveChangesAsync();
+        await _regionRepository.UpdateAsync(id, regionModel);
 
         return NoContent();
 
@@ -114,14 +113,7 @@ public class RegionsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteRegion(Guid id)
     {
-        var regionModel = await _context.Regions.FindAsync(id);
-        if (regionModel == null)
-        {
-            return NotFound();
-        }
-
-        _context.Regions.Remove(regionModel);
-        await _context.SaveChangesAsync();
+        await _regionRepository.DeleteAsync(id);
 
         return NoContent();
     }
